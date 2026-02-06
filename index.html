@@ -1,192 +1,259 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Menu Assistant</title>
-    <style>
-        :root { --primary: #FF6B6B; --dark: #2D3436; --light: #F9F9F9; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--light); color: var(--dark); padding: 20px; max-width: 500px; margin: 0 auto; }
-        
-        h1 { font-size: 1.5rem; text-align: center; margin-bottom: 2rem; }
-        h2 { font-size: 1.2rem; margin-bottom: 1rem; }
-        
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: center; }
-        .hidden { display: none; }
-        
-        /* Buttons */
-        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #eee; border-radius: 8px; background: white; font-size: 1rem; cursor: pointer; transition: 0.2s; }
-        .btn.selected { border-color: var(--primary); background: #FFF0F0; color: var(--primary); font-weight: bold; }
-        .btn-action { background: var(--primary); color: white; border: none; font-weight: bold; margin-top: 20px; }
-        
-        /* Menu Item Styling */
-        .menu-item { text-align: left; border-left: 4px solid var(--primary); padding-left: 15px; margin-bottom: 15px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .item-name { font-weight: bold; font-size: 1.1rem; }
-        .item-cals { font-size: 0.8rem; color: #888; background: #eee; padding: 2px 6px; border-radius: 4px; }
-        .item-desc { font-size: 0.9rem; color: #555; }
-        .warning { color: #D32F2F; font-size: 0.8rem; font-weight: bold; margin-top: 5px; display: block;}
-        
-        /* Range Slider */
-        input[type=range] { width: 100%; margin: 20px 0; }
-        .labels { display: flex; justify-content: space-between; font-size: 0.8rem; color: #888; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Event Menu Assistant</title>
+  <style>
+    :root { --primary: #FF6B6B; --dark: #2D3436; --light: #F9F9F9; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--light); color: var(--dark); padding: 20px; max-width: 500px; margin: 0 auto; }
+
+    h1 { font-size: 1.5rem; text-align: center; margin-bottom: 2rem; }
+    h2 { font-size: 1.2rem; margin-bottom: 1rem; }
+
+    .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: center; }
+    .hidden { display: none; }
+
+    .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #eee; border-radius: 8px; background: white; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+    .btn.selected { border-color: var(--primary); background: #FFF0F0; color: var(--primary); font-weight: bold; }
+    .btn-action { background: var(--primary); color: white; border: none; font-weight: bold; margin-top: 20px; }
+
+    .menu-item { text-align: left; border-left: 4px solid var(--primary); padding-left: 15px; margin-bottom: 15px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+    .item-name { font-weight: bold; font-size: 1.1rem; }
+    .item-cals { font-size: 0.8rem; color: #888; background: #eee; padding: 2px 6px; border-radius: 4px; }
+    .warning { color: #D32F2F; font-size: 0.8rem; font-weight: bold; margin-top: 5px; display: block; }
+
+    input[type=range] { width: 100%; margin: 20px 0; }
+    .labels { display: flex; justify-content: space-between; font-size: 0.8rem; color: #888; }
+  </style>
 </head>
 <body>
 
-    <div id="step-1" class="card">
-        <h1>Welcome to Lunch! 🍽️</h1>
-        <p>Let's find the perfect plate for you.</p>
-        <button class="btn btn-action" onclick="nextStep(1)">Start</button>
-    </div>
+  <div id="step-1" class="card">
+    <h1>Welcome to Lunch! 🍽️</h1>
+    <p>Let's find the perfect plate for you.</p>
+    <button class="btn btn-action" onclick="nextStep(1)">Start</button>
+  </div>
 
-    <div id="step-2" class="card hidden">
-        <h2>Do you have any dietary restrictions?</h2>
-        <p>Select all that apply:</p>
-        <button class="btn toggle-btn" onclick="toggleSelection(this, 'Gluten')">🚫 Gluten Free</button>
-        <button class="btn toggle-btn" onclick="toggleSelection(this, 'Dairy')">🚫 Dairy Free</button>
-        <button class="btn toggle-btn" onclick="toggleSelection(this, 'Nuts')">🚫 Nut Free</button>
-        <button class="btn btn-action" onclick="nextStep(2)">Next</button>
-    </div>
+  <!-- STEP 2: PREFERENCES (single choice) -->
+  <div id="step-2" class="card hidden">
+    <h2>What best describes your food preference?</h2>
+    <p>Select one:</p>
 
-    <div id="step-3" class="card hidden">
-        <h2>What's your mood?</h2>
-        <button class="btn" onclick="setMood('Fresh')">🥗 Fresh & Healthy</button>
-        <button class="btn" onclick="setMood('Comfort')">🍲 Warm Comfort Food</button>
-        <button class="btn" onclick="setMood('Spicy')">🌶️ Spicy & Bold</button>
-        <button class="btn" onclick="setMood('Sweet')">🍰 Just here for Dessert</button>
-    </div>
+    <button class="btn pref-btn" onclick="setPreference(this, 'None')">No dietary requirements</button>
+    <button class="btn pref-btn" onclick="setPreference(this, 'Vegetarian')">Vegetarian</button>
+    <button class="btn pref-btn" onclick="setPreference(this, 'Vegan')">Vegan</button>
+    <button class="btn pref-btn" onclick="setPreference(this, 'Pescatarian')">Pescatarian</button>
+    <button class="btn pref-btn" onclick="setPreference(this, 'Flexitarian')">Flexitarian</button>
+    <button class="btn pref-btn" onclick="setPreference(this, 'PlantBased')">Plant-based</button>
 
-    <div id="step-4" class="card hidden">
-        <h2>How hungry are you?</h2>
-        <input type="range" id="hungerRange" min="1" max="3" value="2">
-        <div class="labels">
-            <span>Just a snack</span>
-            <span>Regular</span>
-            <span>Starving</span>
-        </div>
-        <button class="btn btn-action" onclick="showResults()">Find Food</button>
-    </div>
+    <button class="btn btn-action" onclick="nextStep(2)">Next</button>
+  </div>
 
-    <div id="results" class="hidden">
-        <h1>Chef Recommends:</h1>
-        <div id="recommendation-list"></div>
-        <button class="btn" onclick="location.reload()">Start Over</button>
+  <!-- STEP 3: ALLERGIES (multi-select) -->
+  <div id="step-3" class="card hidden">
+    <h2>Any allergies to avoid?</h2>
+    <p>Select all that apply:</p>
+    <button class="btn toggle-btn" onclick="toggleAllergy(this, 'Gluten')">🚫 Gluten</button>
+    <button class="btn toggle-btn" onclick="toggleAllergy(this, 'Dairy')">🚫 Dairy</button>
+    <button class="btn toggle-btn" onclick="toggleAllergy(this, 'Nuts')">🚫 Nuts</button>
+    <button class="btn btn-action" onclick="nextStep(3)">Next</button>
+  </div>
+
+  <div id="step-4" class="card hidden">
+    <h2>What's your mood?</h2>
+    <button class="btn" onclick="setMood('Fresh')">🥗 Fresh & Healthy</button>
+    <button class="btn" onclick="setMood('Comfort')">🍲 Warm Comfort Food</button>
+    <button class="btn" onclick="setMood('Spicy')">🌶️ Spicy & Bold</button>
+    <button class="btn" onclick="setMood('Sweet')">🍰 Just here for Dessert</button>
+  </div>
+
+  <div id="step-5" class="card hidden">
+    <h2>How hungry are you?</h2>
+    <input type="range" id="hungerRange" min="1" max="3" value="2">
+    <div class="labels">
+      <span>Just a snack</span>
+      <span>Regular</span>
+      <span>Starving</span>
     </div>
+    <button class="btn btn-action" onclick="showResults()">Find Food</button>
+  </div>
+
+  <div id="results" class="hidden">
+    <h1>Chef Recommends:</h1>
+    <div id="recommendation-list"></div>
+    <button class="btn" onclick="location.reload()">Start Over</button>
+  </div>
 
 <script>
-    // --- THE DATABASE (From your CSV) ---
-    const menu = [
-        // Soups & Breads
-        { name: "Smoked Pumpkin Soup", allergens: ["Nuts", "Dairy"], kcal: 85, mood: ["Comfort", "Fresh"], type: "Starter" },
-        { name: "Tamatar Dal Ka Shorba", allergens: [], kcal: 45, mood: ["Comfort", "Fresh", "Spicy"], type: "Starter" },
-        { name: "Assorted Bread Rolls", allergens: ["Gluten", "Dairy"], kcal: 265, mood: ["Comfort"], type: "Side" },
-        // Salads
-        { name: "Chickpea, Cucumber & Feta", allergens: ["Dairy"], kcal: 140, mood: ["Fresh"], type: "Salad" },
-        { name: "Arugula, Avocado & Grapes", allergens: [], kcal: 115, mood: ["Fresh", "Healthy"], type: "Salad" },
-        { name: "Mexican Quinoa Salad", allergens: [], kcal: 120, mood: ["Fresh", "Spicy"], type: "Salad" },
-        { name: "Greek Salad", allergens: ["Dairy"], kcal: 105, mood: ["Fresh"], type: "Salad" },
-        { name: "Som Tum Salad", allergens: ["Nuts"], kcal: 75, mood: ["Fresh", "Spicy"], type: "Salad" },
-        // Western Hot
-        { name: "Winter Veg Lasagna", allergens: ["Gluten", "Dairy"], kcal: 180, mood: ["Comfort"], type: "Main" },
-        { name: "Ratatouille", allergens: [], kcal: 65, mood: ["Fresh", "Healthy"], type: "Main" },
-        { name: "Wild Mushroom Fricasse", allergens: ["Dairy"], kcal: 110, mood: ["Comfort"], type: "Main" },
-        { name: "Pesto Cottage Cheese Steaks", allergens: ["Dairy", "Nuts"], kcal: 230, mood: ["Comfort"], type: "Main" },
-        // Indian Hot
-        { name: "Paneer Makhani", allergens: ["Dairy", "Nuts"], kcal: 210, mood: ["Comfort", "Spicy"], type: "Main" },
-        { name: "Tawa Soyachaap", allergens: ["Gluten", "Dairy"], kcal: 185, mood: ["Spicy", "Comfort"], type: "Main" },
-        { name: "Pindi Cholley", allergens: [], kcal: 155, mood: ["Spicy", "Comfort"], type: "Main" },
-        { name: "Dum Waale Aloo", allergens: ["Dairy"], kcal: 135, mood: ["Comfort"], type: "Main" },
-        { name: "Awadhi Subz Biryani", allergens: ["Dairy"], kcal: 145, mood: ["Comfort", "Spicy"], type: "Main" },
-        // Asian
-        { name: "Mapu Tofu", allergens: [], kcal: 95, mood: ["Spicy", "Comfort"], type: "Main" },
-        { name: "Veg Hakka Noodles", allergens: ["Gluten"], kcal: 155, mood: ["Comfort", "Spicy"], type: "Main" },
-        { name: "Thai Curries", allergens: [], kcal: 130, mood: ["Spicy", "Comfort"], type: "Main" },
-        // Desserts
-        { name: "Chocolate Caramel Éclair", allergens: ["Gluten", "Dairy"], kcal: 320, mood: ["Sweet"], type: "Dessert" },
-        { name: "Hazelnut Delight", allergens: ["Nuts", "Dairy"], kcal: 380, mood: ["Sweet"], type: "Dessert" },
-        { name: "Basque Cheese Cake", allergens: ["Dairy"], kcal: 315, mood: ["Sweet"], type: "Dessert" },
-        { name: "Gajar Ka Halwa", allergens: ["Dairy", "Nuts"], kcal: 245, mood: ["Sweet", "Comfort"], type: "Dessert" }
-    ];
+  // --- MENU DATABASE ---
+  // Added: tags[] for preference filtering (Vegan / Vegetarian / Pescatarian / PlantBased etc.)
+  const menu = [
+    // Soups & Breads
+    { name: "Smoked Pumpkin Soup", allergens: ["Nuts", "Dairy"], kcal: 85, mood: ["Comfort", "Fresh"], type: "Starter", tags: ["Vegetarian"] },
+    { name: "Tamatar Dal Ka Shorba", allergens: [], kcal: 45, mood: ["Comfort", "Fresh", "Spicy"], type: "Starter", tags: ["Vegan","PlantBased"] },
+    { name: "Assorted Bread Rolls", allergens: ["Gluten", "Dairy"], kcal: 265, mood: ["Comfort"], type: "Side", tags: ["Vegetarian"] },
 
-    // --- APP STATE ---
-    let userRestrictions = [];
-    let userMood = "";
+    // Salads
+    { name: "Chickpea, Cucumber & Feta", allergens: ["Dairy"], kcal: 140, mood: ["Fresh"], type: "Salad", tags: ["Vegetarian"] },
+    { name: "Arugula, Avocado & Grapes", allergens: [], kcal: 115, mood: ["Fresh"], type: "Salad", tags: ["Vegan","PlantBased"] },
+    { name: "Mexican Quinoa Salad", allergens: [], kcal: 120, mood: ["Fresh", "Spicy"], type: "Salad", tags: ["Vegan","PlantBased"] },
+    { name: "Greek Salad", allergens: ["Dairy"], kcal: 105, mood: ["Fresh"], type: "Salad", tags: ["Vegetarian"] },
+    { name: "Som Tum Salad", allergens: ["Nuts"], kcal: 75, mood: ["Fresh", "Spicy"], type: "Salad", tags: ["Vegan","PlantBased"] },
 
-    // --- FUNCTIONS ---
-    function nextStep(current) {
-        document.getElementById(`step-${current}`).classList.add('hidden');
-        document.getElementById(`step-${current + 1}`).classList.remove('hidden');
+    // Western Hot
+    { name: "Winter Veg Lasagna", allergens: ["Gluten", "Dairy"], kcal: 180, mood: ["Comfort"], type: "Main", tags: ["Vegetarian"] },
+    { name: "Ratatouille", allergens: [], kcal: 65, mood: ["Fresh"], type: "Main", tags: ["Vegan","PlantBased"] },
+    { name: "Wild Mushroom Fricasse", allergens: ["Dairy"], kcal: 110, mood: ["Comfort"], type: "Main", tags: ["Vegetarian"] },
+    { name: "Pesto Cottage Cheese Steaks", allergens: ["Dairy", "Nuts"], kcal: 230, mood: ["Comfort"], type: "Main", tags: ["Vegetarian"] },
+
+    // Indian Hot
+    { name: "Paneer Makhani", allergens: ["Dairy", "Nuts"], kcal: 210, mood: ["Comfort", "Spicy"], type: "Main", tags: ["Vegetarian"] },
+    { name: "Tawa Soyachaap", allergens: ["Gluten", "Dairy"], kcal: 185, mood: ["Spicy", "Comfort"], type: "Main", tags: ["Vegetarian"] },
+    { name: "Pindi Cholley", allergens: [], kcal: 155, mood: ["Spicy", "Comfort"], type: "Main", tags: ["Vegan","PlantBased"] },
+    { name: "Dum Waale Aloo", allergens: ["Dairy"], kcal: 135, mood: ["Comfort"], type: "Main", tags: ["Vegetarian"] },
+    { name: "Awadhi Subz Biryani", allergens: ["Dairy"], kcal: 145, mood: ["Comfort", "Spicy"], type: "Main", tags: ["Vegetarian"] },
+
+    // Asian
+    { name: "Mapu Tofu", allergens: [], kcal: 95, mood: ["Spicy", "Comfort"], type: "Main", tags: ["Vegan","PlantBased"] },
+    { name: "Veg Hakka Noodles", allergens: ["Gluten"], kcal: 155, mood: ["Comfort", "Spicy"], type: "Main", tags: ["Vegan","PlantBased"] },
+    { name: "Thai Curries", allergens: [], kcal: 130, mood: ["Spicy", "Comfort"], type: "Main", tags: ["Vegan","PlantBased"] },
+
+    // Desserts
+    { name: "Chocolate Caramel Éclair", allergens: ["Gluten", "Dairy"], kcal: 320, mood: ["Sweet"], type: "Dessert", tags: ["Vegetarian"] },
+    { name: "Hazelnut Delight", allergens: ["Nuts", "Dairy"], kcal: 380, mood: ["Sweet"], type: "Dessert", tags: ["Vegetarian"] },
+    { name: "Basque Cheese Cake", allergens: ["Dairy"], kcal: 315, mood: ["Sweet"], type: "Dessert", tags: ["Vegetarian"] },
+    { name: "Gajar Ka Halwa", allergens: ["Dairy", "Nuts"], kcal: 245, mood: ["Sweet", "Comfort"], type: "Dessert", tags: ["Vegetarian"] }
+  ];
+
+  // --- APP STATE ---
+  let userPreference = "None";     // single choice
+  let userAllergies = [];          // multi-select
+  let userMood = "";
+
+  // --- NAV ---
+  function nextStep(current) {
+    document.getElementById(`step-${current}`).classList.add('hidden');
+    document.getElementById(`step-${current + 1}`).classList.remove('hidden');
+  }
+
+  // --- STEP 2: Preferences (single-select) ---
+  function setPreference(btn, pref) {
+    userPreference = pref;
+
+    // clear selection on all pref buttons, set selected on clicked
+    document.querySelectorAll('.pref-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+
+  // --- STEP 3: Allergies (multi-select) ---
+  function toggleAllergy(btn, allergen) {
+    if (userAllergies.includes(allergen)) {
+      userAllergies = userAllergies.filter(a => a !== allergen);
+      btn.classList.remove('selected');
+    } else {
+      userAllergies.push(allergen);
+      btn.classList.add('selected');
+    }
+  }
+
+  // --- STEP 4: Mood ---
+  function setMood(mood) {
+    userMood = mood;
+    nextStep(4);
+  }
+
+  // --- RESULTS ---
+  function showResults() {
+    document.getElementById('step-5').classList.add('hidden');
+    document.getElementById('results').classList.remove('hidden');
+
+    const hungerLevel = document.getElementById('hungerRange').value; // 1=Snack, 2=Regular, 3=Starving
+    const container = document.getElementById('recommendation-list');
+    container.innerHTML = "";
+
+    // 1) FILTER BY ALLERGIES
+    let suggestions = menu.filter(item => {
+      const isUnsafe = item.allergens.some(a => userAllergies.includes(a));
+      return !isUnsafe;
+    });
+
+    // 2) FILTER BY PREFERENCE
+    suggestions = suggestions.filter(item => preferenceAllowsItem(item));
+
+    // 3) SCORE + SORT
+    suggestions = suggestions.map(item => {
+      let score = 0;
+
+      // Mood Match
+      if (item.mood.includes(userMood)) score += 5;
+
+      // Hunger Match
+      if (hungerLevel == 1 && item.kcal < 150) score += 3;
+      if (hungerLevel == 3 && item.kcal > 150) score += 3;
+
+      // Dessert Priority
+      if (userMood === "Sweet" && item.type === "Dessert") score += 10;
+
+      return { ...item, score };
+    });
+
+    suggestions.sort((a, b) => b.score - a.score);
+
+    // DISPLAY
+    if (suggestions.length === 0) {
+      container.innerHTML = "<p>Nothing matches your preference + allergy settings. Please ask a chef for assistance!</p>";
+      return;
     }
 
-    function toggleSelection(btn, allergy) {
-        if (userRestrictions.includes(allergy)) {
-            userRestrictions = userRestrictions.filter(a => a !== allergy);
-            btn.classList.remove('selected');
-        } else {
-            userRestrictions.push(allergy);
-            btn.classList.add('selected');
-        }
+    suggestions.slice(0, 6).forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'menu-item';
+
+      const allergyText = item.allergens.length > 0 ? `Contains: ${item.allergens.join(", ")}` : "Allergen Free";
+
+      div.innerHTML = `
+        <div class="item-header">
+          <span class="item-name">${item.name}</span>
+          <span class="item-cals">${item.kcal} kcal</span>
+        </div>
+        <span class="warning">${allergyText}</span>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  // Preference rules:
+  // - None / Flexitarian: allow everything (allergy filter still applies)
+  // - PlantBased: allow Vegan + PlantBased (i.e., anything not using animal products in your tagging)
+  // - Vegetarian: allow Vegetarian + Vegan + PlantBased (vegans are also vegetarian)
+  // - Vegan: allow Vegan + PlantBased
+  // - Pescatarian: allow Pescatarian + Vegetarian + Vegan + PlantBased (but NOT meat)
+  function preferenceAllowsItem(item) {
+    const tags = item.tags || [];
+
+    if (userPreference === "None" || userPreference === "Flexitarian") return true;
+
+    if (userPreference === "Vegan") {
+      return tags.includes("Vegan") || tags.includes("PlantBased");
     }
 
-    function setMood(mood) {
-        userMood = mood;
-        nextStep(3);
+    if (userPreference === "PlantBased") {
+      return tags.includes("PlantBased") || tags.includes("Vegan");
     }
 
-    function showResults() {
-        document.getElementById('step-4').classList.add('hidden');
-        document.getElementById('results').classList.remove('hidden');
-        
-        const hungerLevel = document.getElementById('hungerRange').value; // 1=Snack, 2=Regular, 3=Starving
-        const container = document.getElementById('recommendation-list');
-        
-        // FILTERING LOGIC
-        let suggestions = menu.filter(item => {
-            // 1. Safety Filter: Check if item has any restricted allergen
-            const isUnsafe = item.allergens.some(a => userRestrictions.includes(a));
-            return !isUnsafe;
-        });
-
-        // SCORING LOGIC
-        suggestions = suggestions.map(item => {
-            let score = 0;
-            // Mood Match
-            if (item.mood.includes(userMood)) score += 5;
-            
-            // Hunger Match
-            if (hungerLevel == 1 && item.kcal < 150) score += 3; // Light food for light hunger
-            if (hungerLevel == 3 && item.kcal > 150) score += 3; // Heavy food for high hunger
-            if (userMood === "Sweet" && item.type === "Dessert") score += 10; // Prioritize dessert if asked
-
-            return { ...item, score };
-        });
-
-        // Sort by Score
-        suggestions.sort((a, b) => b.score - a.score);
-
-        // Display Top 5
-        if (suggestions.length === 0) {
-            container.innerHTML = "<p>It looks like everything conflicts with your allergy settings. Please ask a chef for assistance!</p>";
-        } else {
-            suggestions.slice(0, 6).forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'menu-item';
-                
-                // Format Allergen Warning Text
-                let allergyText = item.allergens.length > 0 ? `Contains: ${item.allergens.join(", ")}` : "Allergen Free";
-                
-                div.innerHTML = `
-                    <div class="item-header">
-                        <span class="item-name">${item.name}</span>
-                        <span class="item-cals">${item.kcal} kcal</span>
-                    </div>
-                    <span class="warning">${allergyText}</span>
-                `;
-                container.appendChild(div);
-            });
-        }
+    if (userPreference === "Vegetarian") {
+      return tags.includes("Vegetarian") || tags.includes("Vegan") || tags.includes("PlantBased");
     }
+
+    if (userPreference === "Pescatarian") {
+      return tags.includes("Pescatarian") || tags.includes("Vegetarian") || tags.includes("Vegan") || tags.includes("PlantBased");
+    }
+
+    return true;
+  }
 </script>
+
 </body>
 </html>
